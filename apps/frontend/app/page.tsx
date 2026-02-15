@@ -103,12 +103,13 @@ export default function Page() {
   }
 
   return (
-    <div style={{ maxWidth: 640, margin: '0 auto', padding: 16 }}>
-      <h1>記帳</h1>
-      <div>
-        <label>日期</label>
-        <input type="date" value={date} onChange={e => setDate(e.target.value)} />
-      </div>
+    <div className="container">
+      <div className="card">
+        <h1 style={{ marginTop: 0 }}>記帳</h1>
+        <div className="field">
+          <label>日期</label>
+          <input type="date" value={date} onChange={e => setDate(e.target.value)} />
+        </div>
       <FieldWithQuickCreate
         label="分類"
         options={categories}
@@ -153,24 +154,27 @@ export default function Page() {
           setFundId(r.id)
         }}
       />
-      <div>
-        <label>內容</label>
-        <input value={content} onChange={e => setContent(e.target.value)} placeholder="敘述" />
+        <div className="field">
+          <label>內容</label>
+          <input value={content} onChange={e => setContent(e.target.value)} placeholder="敘述" />
+        </div>
+        <div className="field">
+          <label>金額</label>
+          <input type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} />
+        </div>
+        <div className="field">
+          <label>備註</label>
+          <input value={note} onChange={e => setNote(e.target.value)} />
+        </div>
+        <div className="field">
+          <label>單據上存（相片與PDF）</label>
+          <input type="file" multiple onChange={e => setFiles(Array.from(e.target.files || []))} />
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="primary" onClick={onSubmit} disabled={saving}>提交</button>
+          <div className="hint">{message}</div>
+        </div>
       </div>
-      <div>
-        <label>金額</label>
-        <input type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} />
-      </div>
-      <div>
-        <label>備註</label>
-        <input value={note} onChange={e => setNote(e.target.value)} />
-      </div>
-      <div>
-        <label>單據上存（相片與PDF）</label>
-        <input type="file" multiple onChange={e => setFiles(Array.from(e.target.files || []))} />
-      </div>
-      <button onClick={onSubmit} disabled={saving}>提交</button>
-      <div>{message}</div>
     </div>
   )
 }
@@ -191,19 +195,24 @@ function FieldWithQuickCreate({
   const [input, setInput] = useState('')
   const matched = useMemo(() => options.filter(o => o.name.toLowerCase().includes(input.toLowerCase())), [options, input])
   return (
-    <div>
-      <label>{label}</label>
-      <select value={value ?? ''} onChange={e => onChange(e.target.value ? Number(e.target.value) : null)}>
-        <option value="">未選擇</option>
-        {options.map(o => (
-          <option key={o.id} value={o.id}>{o.name}</option>
-        ))}
-      </select>
-      <input value={input} onChange={e => setInput(e.target.value)} placeholder="輸入新增" />
-      <button type="button" onClick={() => onQuickCreate(input)}>新增</button>
-      <div style={{ fontSize: 12, color: '#666' }}>
-        建議：先輸入再選擇；或直接新增後選擇
+    <div className="section">
+      <div className="field">
+        <label>{label}</label>
+        <select value={value ?? ''} onChange={e => onChange(e.target.value ? Number(e.target.value) : null)}>
+          <option value="">未選擇</option>
+          {options.map(o => (
+            <option key={o.id} value={o.id}>{o.name}</option>
+          ))}
+        </select>
       </div>
+      <div className="field">
+        <label>快速新增</label>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input value={input} onChange={e => setInput(e.target.value)} placeholder="輸入新增" />
+          <button type="button" className="primary" onClick={() => onQuickCreate(input)}>新增</button>
+        </div>
+      </div>
+      <div className="hint">建議：先輸入再選擇；或直接新增後選擇</div>
     </div>
   )
 }
