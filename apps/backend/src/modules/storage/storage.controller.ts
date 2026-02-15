@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common'
+import { Body, Controller, Post, Get, Query } from '@nestjs/common'
 import { StorageService } from './storage.service.js'
 import { PrismaService } from '../../prisma.service.js'
 
@@ -28,5 +28,11 @@ export class StorageController {
       },
     })
     return att
+  }
+
+  @Get('url')
+  async url(@Query('key') key: string, @Query('expires') expires?: string) {
+    if (!key) return { ok: false }
+    return this.storage.createDownloadUrl(key, Number(expires || 300))
   }
 }

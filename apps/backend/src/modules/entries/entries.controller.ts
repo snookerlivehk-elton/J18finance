@@ -70,6 +70,46 @@ export class EntriesController {
     return items
   }
 
+  @Get('summary')
+  async summary(
+    @Query('date_from') dateFrom?: string,
+    @Query('date_to') dateTo?: string,
+    @Query('category') category?: string,
+    @Query('company') company?: string,
+    @Query('handler') handler?: string,
+    @Query('fund') fund?: string,
+  ) {
+    const base: any = {}
+    if (dateFrom || dateTo) {
+      base.date = {}
+      if (dateFrom) base.date.gte = new Date(dateFrom)
+      if (dateTo) base.date.lte = new Date(dateTo)
+    }
+    if (category) base.categoryId = Number(category)
+    if (company) base.companyId = Number(company)
+    if (handler) base.handlerId = Number(handler)
+    if (fund) base.fundId = Number(fund)
+    const incomeAgg = await this.prisma.entry.aggregate({
+      _sum: { amount: true },
+      _count: { _all: true },
+      where: { ...base, amount: { gt: 0 } },
+    })
+    const expenseAgg = await this.prisma.entry.aggregate({
+      _sum: { amount: true },
+      _count: { _all: true },
+      where: { ...base, amount: { lt: 0 } },
+    })
+    const income = Number(incomeAgg._sum.amount || 0)
+    const expense = Number(expenseAgg._sum.amount || 0)
+    return {
+      income,
+      expense,
+      net: income + expense,
+      count_income: Number(incomeAgg._count._all || 0),
+      count_expense: Number(expenseAgg._count._all || 0),
+    }
+  }
+
   @UseGuards(ApiKeyGuard)
   @Post('batch')
   async batch(@Body() body: any[]) {

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { S3Client } from '@aws-sdk/client-s3'
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { v4 as uuidv4 } from 'uuid'
 
 @Injectable()
@@ -30,5 +31,12 @@ export class StorageService {
       Expires: 300,
     })
     return { url, fields, key, bucket }
+  }
+
+  async createDownloadUrl(key: string, expires = 300) {
+    const bucket = process.env.R2_BUCKET || ''
+    const command = new GetObjectCommand({ Bucket: bucket, Key: key })
+    const url = await getSignedUrl(this.client, command, { expiresIn: expires })
+    return { url, key, bucket }
   }
 }
