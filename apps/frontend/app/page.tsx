@@ -9,6 +9,7 @@ export default function Page() {
   const [date, setDate] = useState<string>(new Date().toISOString().slice(0, 10))
   const [content, setContent] = useState('')
   const [amount, setAmount] = useState<number>(0)
+  const [amountStr, setAmountStr] = useState('')
   const [note, setNote] = useState('')
   const [categoryId, setCategoryId] = useState<number | null>(null)
   const [companyId, setCompanyId] = useState<number | null>(null)
@@ -62,7 +63,7 @@ export default function Page() {
           handlerId,
           fundId,
           content,
-          amount,
+          amount: amount,
           note,
           flow,
         }),
@@ -162,7 +163,22 @@ export default function Page() {
         </div>
         <div className="field">
           <label>金額</label>
-          <input type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} />
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]*"
+              placeholder="請輸入金額"
+              value={amountStr}
+              onChange={e => {
+                const raw = e.target.value.replace(/[^\d.\-]/g, '')
+                setAmountStr(raw)
+                const n = Number(raw || 0)
+                setAmount(n)
+              }}
+            />
+            <div className="hint">預覽：${new Intl.NumberFormat('zh-HK',{maximumFractionDigits:2}).format(amount || 0)}</div>
+          </div>
         </div>
         <div className="field">
           <label>備註</label>
@@ -233,7 +249,22 @@ export default function Page() {
         </div>
         <div className="field">
           <label>金額</label>
-          <input type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} />
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]*"
+              placeholder="請輸入金額"
+              value={amountStr}
+              onChange={e => {
+                const raw = e.target.value.replace(/[^\d.\-]/g, '')
+                setAmountStr(raw)
+                const n = Number(raw || 0)
+                setAmount(n)
+              }}
+            />
+            <div className="hint">預覽：${new Intl.NumberFormat('zh-HK',{maximumFractionDigits:2}).format(amount || 0)}</div>
+          </div>
         </div>
         <div className="field">
           <label>備註</label>

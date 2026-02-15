@@ -42,6 +42,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #334155;
             background: #0b1220; color: var(--text);
           }
+          @media (max-width: 480px) {
+            input, select, button { padding: 12px 14px; font-size: 16px; }
+            .field { grid-template-columns: 120px 1fr; }
+          }
           input::placeholder { color: #6b7280 }
           button {
             padding: 10px 14px; border-radius: 8px; border: 1px solid #1e293b; cursor: pointer;
@@ -55,8 +59,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           .expenseBtn:hover { filter: brightness(1.05) }
           .grid2 { display: grid; grid-template-columns: 1fr; gap: 16px }
           @media (min-width: 900px) { .grid2 { grid-template-columns: 1fr 1fr } }
-          .cardIncome { border-color: #155e59 }
-          .cardExpense { border-color: #5b1a1a }
+          .cardIncome { border-color: #155e59; background: linear-gradient(180deg, rgba(19,83,76,.25), var(--card)); }
+          .cardExpense { border-color: #5b1a1a; background: linear-gradient(180deg, rgba(120,35,35,.25), var(--card)); }
           .hint { font-size: 12px; color: var(--muted); margin-top: 6px }
           table { width: 100%; border-collapse: collapse; }
           th, td { padding: 8px 10px; border-bottom: 1px solid #263245 }
