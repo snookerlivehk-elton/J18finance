@@ -78,6 +78,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           .tab { padding: 10px 14px; border-radius: 8px; border: 1px solid #223047; background: #0b1220; color: var(--text) }
           .tabActive { background: var(--brand); color: #0b1220; border-color: var(--brand); font-weight: 700 }
           @media (max-width: 900px) { .tabs { display: flex } }
+          .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 50 }
+          .modal { width: 92%; max-width: 560px; background: var(--card); border: 1px solid #253043; border-radius: 12px; padding: 18px; box-shadow: 0 10px 40px rgba(0,0,0,.4) }
+          .modal h3 { margin: 0 0 12px 0 }
+          .modal .row { display: grid; grid-template-columns: 140px 1fr; gap: 10px; margin: 6px 0 }
+          .modal .files { margin-top: 8px; }
+          .modalActions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px }
         `}</style>
       </head>
       <body>

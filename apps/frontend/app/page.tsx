@@ -30,6 +30,8 @@ export default function Page() {
   const amountInvalidI = isNaN(amountI) || amountI <= 0
   const [flowTab, setFlowTab] = useState<'expense' | 'income'>('expense')
   const [isMobile, setIsMobile] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmFlow, setConfirmFlow] = useState<'expense' | 'income'>('expense')
 
   async function fetchOptions() {
     const [cs, cos, hs, fs] = await Promise.all([
@@ -132,6 +134,15 @@ export default function Page() {
   function toTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+  function openConfirm(flow: 'expense' | 'income') {
+    if (saving) return
+    setConfirmFlow(flow)
+    setConfirmOpen(true)
+  }
+  function closeConfirm() {
+    if (saving) return
+    setConfirmOpen(false)
+  }
 
   return (
     <div className="container">
@@ -225,7 +236,7 @@ export default function Page() {
           <input type="file" multiple onChange={e => setFiles(Array.from(e.target.files || []))} />
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="expenseBtn" onClick={() => onSubmit('expense')} disabled={saving || amountInvalidE}>提交支出</button>
+          <button className="expenseBtn" onClick={() => openConfirm('expense')} disabled={saving || amountInvalidE}>提交支出</button>
           <div className="hint">{message}</div>
         </div>
         </div>
@@ -315,7 +326,7 @@ export default function Page() {
           <input type="file" multiple onChange={e => setFiles(Array.from(e.target.files || []))} />
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="incomeBtn" onClick={() => onSubmit('income')} disabled={saving || amountInvalidI}>提交收入</button>
+          <button className="incomeBtn" onClick={() => openConfirm('income')} disabled={saving || amountInvalidI}>提交收入</button>
           <div className="hint">{message}</div>
         </div>
         </div>
@@ -341,6 +352,32 @@ export default function Page() {
       </div>
       {toast && <div className="toast">{toast}</div>}
       <button className="topBtn" onClick={toTop}>返回頂部</button>
+      {confirmOpen && (
+        <div className="overlay">
+          <div className="modal">
+            <h3>{confirmFlow === 'expense' ? '確認提交支出' : '確認提交收入'}</h3>
+            <div className="row"><div>日期</div><div>{date}</div></div>
+            <div className="row"><div>分類</div><div>{categories.find(c=>c.id===categoryId)?.name || '-'}</div></div>
+            <div className="row"><div>公司</div><div>{companies.find(c=>c.id===companyId)?.name || '-'}</div></div>
+            <div className="row"><div>經手人</div><div>{handlers.find(c=>c.id===handlerId)?.name || '-'}</div></div>
+            <div className="row"><div>資金源/去向</div><div>{funds.find(c=>c.id===fundId)?.name || '-'}</div></div>
+            <div className="row"><div>內容</div><div>{content || '-'}</div></div>
+            <div className="row"><div>金額</div><div>${new Intl.NumberFormat('zh-HK',{maximumFractionDigits:2}).format(confirmFlow==='expense'? (amountE||0) : (amountI||0))}</div></div>
+            <div className="files">
+              <div className="row"><div>附件</div><div>{files.length ? `${files.length} 件` : '無'}</div></div>
+              {files.length>0 && (
+                <ul style={{ margin: 0, paddingLeft: 18 }}>
+                  {files.map((f,i)=>(<li key={i}>{f.name} · {Math.round(f.size/1024)}KB</li>))}
+                </ul>
+              )}
+            </div>
+            <div className="modalActions">
+              <button onClick={closeConfirm} disabled={saving}>取消</button>
+              <button className={confirmFlow==='expense'?'expenseBtn':'incomeBtn'} onClick={() => onSubmit(confirmFlow)} disabled={saving}>確認提交</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
