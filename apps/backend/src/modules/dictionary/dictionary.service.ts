@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../../prisma.service.js'
+import { Prisma } from '@prisma/client'
 
 type DictType = 'category' | 'company' | 'handler' | 'fund'
 
@@ -9,7 +10,7 @@ export class DictionaryService {
 
   list(type: DictType, q?: string) {
     const where = q
-      ? { name: { contains: q, mode: 'insensitive' }, active: true }
+      ? { name: { contains: q, mode: Prisma.QueryMode.insensitive }, active: true }
       : { active: true }
     switch (type) {
       case 'category':
