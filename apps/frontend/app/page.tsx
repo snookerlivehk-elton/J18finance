@@ -97,6 +97,14 @@ export default function Page() {
           flow,
         }),
       }).then(r => r.json())
+      const hydrated = {
+        ...entry,
+        category: categories.find(c => c.id === categoryId) || undefined,
+        company: companies.find(c => c.id === companyId) || undefined,
+        handler: handlers.find(c => c.id === handlerId) || undefined,
+        fund: funds.find(c => c.id === fundId) || undefined,
+      }
+      setItems(prev => [hydrated, ...prev].slice(0, 20))
       const failed: string[] = []
       for (const f of files) {
         const sign = await fetch(`${API}/api/uploads/sign`, {
@@ -146,7 +154,7 @@ export default function Page() {
     }
   }
   async function fetchRecent() {
-    const r = await fetch(`${API}/api/entries`).then(r => r.json())
+    const r = await fetch(`${API}/api/entries?t=${Date.now()}`).then(r => r.json())
     setItems(Array.isArray(r) ? r.slice(0, 20) : [])
   }
   function toTop() {
