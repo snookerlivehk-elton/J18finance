@@ -254,8 +254,8 @@ export default function Page() {
           {amountInvalidE && amountEStr && <div className="error">請輸入大於 0 的金額</div>}
         </div>
         <div className="field">
-          <label>備註（對換助手）</label>
-          <ForexNote value={noteE} onChange={setNoteE} />
+          <label>備註</label>
+          <input value={noteE} onChange={e => setNoteE(e.target.value)} placeholder="備註" />
         </div>
         <div className="field">
           <label>單據上存（相片與PDF）</label>
@@ -344,8 +344,8 @@ export default function Page() {
           {amountInvalidI && amountIStr && <div className="error">請輸入大於 0 的金額</div>}
         </div>
         <div className="field">
-          <label>備註（對換助手）</label>
-          <ForexNote value={noteI} onChange={setNoteI} />
+          <label>備註</label>
+          <input value={noteI} onChange={e => setNoteI(e.target.value)} placeholder="備註" />
         </div>
         <div className="field">
           <label>單據上存（相片與PDF）</label>
@@ -445,46 +445,6 @@ function FieldWithQuickCreate({
         </div>
       </div>
       <div className="hint">建議：先輸入再選擇；或直接新增後選擇</div>
-    </div>
-  )
-}
-
-function ForexNote({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const [from, setFrom] = useState<'CNY' | 'HKD' | 'USD'>('HKD')
-  const [to, setTo] = useState<'CNY' | 'HKD' | 'USD'>('CNY')
-  const [amt, setAmt] = useState<string>('')
-  const [rate, setRate] = useState<string>('')
-  const [extra, setExtra] = useState<string>('')
-  function compose(f = from, t = to, a = amt, r = rate, ex = extra) {
-    const map: Record<string, string> = { CNY: '人民幣', HKD: '港幣', USD: '美金' }
-    const parts: string[] = []
-    parts.push(`${map[f]} 轉 ${map[t]}`)
-    if (a) parts.push(`金額 ${a}`)
-    if (r) parts.push(`匯率 ${r}`)
-    if (ex) parts.push(ex)
-    onChange(parts.join('；'))
-  }
-  return (
-    <div style={{ display: 'grid', gap: 8 }}>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <select value={from} onChange={e => { const v = e.target.value as any; setFrom(v); compose(v, to, amt, rate, extra) }}>
-          <option value="CNY">人民幣</option>
-          <option value="HKD">港幣</option>
-          <option value="USD">美金</option>
-        </select>
-        <button type="button" onClick={() => { const f = to; const t = from; setFrom(f); setTo(t); compose(f, t, amt, rate, extra) }}>對換</button>
-        <select value={to} onChange={e => { const v = e.target.value as any; setTo(v); compose(from, v, amt, rate, extra) }}>
-          <option value="CNY">人民幣</option>
-          <option value="HKD">港幣</option>
-          <option value="USD">美金</option>
-        </select>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-        <input placeholder="金額" inputMode="decimal" value={amt} onChange={e => { const v = e.target.value.replace(/[^\d.]/g, ''); setAmt(v); compose(from, to, v, rate, extra) }} />
-        <input placeholder="匯率" inputMode="decimal" value={rate} onChange={e => { const v = e.target.value.replace(/[^\d.]/g, ''); setRate(v); compose(from, to, amt, v, extra) }} />
-      </div>
-      <input placeholder="補充說明（可選）" value={extra} onChange={e => { const v = e.target.value; setExtra(v); compose(from, to, amt, rate, v) }} />
-      <div className="hint">將以文字備註儲存：{value || '（尚未輸入）'}</div>
     </div>
   )
 }

@@ -110,6 +110,37 @@ export class EntriesController {
     }
   }
 
+  @Get('fund-summary')
+  async fundSummary(
+    @Query('date_from') dateFrom?: string,
+    @Query('date_to') dateTo?: string,
+  ) {
+    const where: any = {}
+    if (dateFrom || dateTo) {
+      where.date = {}
+      if (dateFrom) where.date.gte = new Date(dateFrom)
+      if (dateTo) where.date.lte = new Date(dateTo)
+    }
+    const groups = await this.prisma.entry.groupBy({
+      by: ['fundId'],
+      where,
+      _sum: { amount: true },
+      _count: { _all: true },
+    })
+    const ids = groups.map(g => g.fundId).filter(id => id !== null) as number[]
+    const funds = await this.prisma.fund.findMany({ where: { id: { in: ids } } })
+    const nameMap = new Map(funds.map(f => [f.id, f.name]))
+    return groups
+      .filter(g => g.fundId !== null)
+      .map(g => ({
+        fundId: g.fundId as number,
+        fundName: nameMap.get(g.fundId as number) || '-',
+        balance: Number(g._sum.amount || 0),
+        count: Number(g._count._all || 0),
+      }))
+      .sort((a, b) => Math.abs(b.balance) - Math.abs(a.balance))
+  }
+
   @UseGuards(ApiKeyGuard)
   @Post('batch')
   async batch(@Body() body: any[]) {

@@ -93,6 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="/">首頁</a>
             <a href="/dictionary">字典管理</a>
             <a href="/reports">月結/查詢</a>
+            <a href="/funds">資金結餘</a>
           </div>
         </div>
         {children}
